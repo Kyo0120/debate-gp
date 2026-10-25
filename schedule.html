@@ -181,20 +181,16 @@
 
   <div class="container">
     <header>
-      <a href="./index.html" class="back-btn">‹ 戻る</a>
+      <a href="./index.html" class="back-btn">&lt; 戻る</a>
       <h1>大会スケジュール</h1>
       <div id="liveClock" class="current-clock">現在時刻: --:--:--</div>
     </header>
 
     <main class="schedule-list" id="scheduleList">
-      <!-- 
-        data-start と data-end に「HH:MM」形式で時間を記載します。
-        必要に応じてタイトルや説明を変更・追加・削除してください。
-      -->
       <div class="schedule-item" data-start="09:00" data-end="09:30">
         <div class="time-badge">09:00 - 09:30</div>
         <div class="item-body">
-          <div class="item-title">オープニング & ルール説明</div>
+          <div class="item-title">オープニング &amp; ルール説明</div>
           <div class="item-detail">対戦組み合わせ・採点基準の確認</div>
         </div>
         <div class="status-badge">予定</div>
@@ -248,7 +244,7 @@
       <div class="schedule-item" data-start="14:45" data-end="15:15">
         <div class="time-badge">14:45 - 15:15</div>
         <div class="item-body">
-          <div class="item-title">結果発表 & 表彰・総括</div>
+          <div class="item-title">結果発表 &amp; 表彰・総括</div>
           <div class="item-detail">結果表示画面の公開、表彰式</div>
         </div>
         <div class="status-badge">予定</div>
@@ -257,7 +253,6 @@
   </div>
 
   <script>
-    // 時間を "HH:MM" 形式から 分換算（数値）に変換する関数
     function timeToMinutes(timeStr) {
       const [h, m] = timeStr.split(':').map(Number);
       return h * 60 + m;
@@ -269,7 +264,6 @@
       const currentMinutes = now.getMinutes();
       const currentSeconds = now.getSeconds();
       
-      // 時計表示の更新
       const pad = (n) => String(n).padStart(2, '0');
       document.getElementById('liveClock').textContent = 
         `現在時刻: ${pad(currentHours)}:${pad(currentMinutes)}:${pad(currentSeconds)}`;
@@ -285,22 +279,18 @@
         item.classList.remove('is-current', 'is-past', 'is-future');
 
         if (currentTotalMin >= startMin && currentTotalMin < endMin) {
-          // 進行中
           item.classList.add('is-current');
           badge.textContent = '● 進行中';
         } else if (currentTotalMin >= endMin) {
-          // 終了済み
           item.classList.add('is-past');
           badge.textContent = '終了';
         } else {
-          // 未開始
           item.classList.add('is-future');
           badge.textContent = '予定';
         }
       });
     }
 
-    // 初回実行と1秒ごとの定期更新
     updateScheduleStatus();
     setInterval(updateScheduleStatus, 1000);
   </script>
