@@ -752,52 +752,46 @@
     updateSchedule();
     setInterval(updateSchedule, 1000);
   </script>
-  <!-- テスト用コントローラー（本番公開前に削除してください） -->
-<div id="timeController" style="position:fixed;bottom:16px;right:16px;background:#1e293b;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.3);z-index:9999;font-size:13px;display:flex;flex-direction:column;gap:6px;">
-  <div style="display:flex;justify-content:space-between;align-items:center;">
-    <strong>テスト用時刻バー</strong>
-    <button onclick="document.getElementById('timeController').remove()" style="background:none;border:none;color:#94a3b8;cursor:pointer;">×</button>
-  </div>
-  <input type="range" id="timeSlider" min="540" max="730" value="550" style="width:220px;cursor:pointer;">
-  <div style="display:flex;justify-content:space-between;font-family:monospace;">
-    <span>設定: <b id="sliderTimeVal" style="color:#38bdf8;">09:10</b></span>
-    <button id="resetRealTimeBtn" style="padding:2px 6px;font-size:11px;cursor:pointer;">実時刻に戻す</button>
-  </div>
-</div>
-
 <script>
-  (function() {
-    let mockTotalMin = null;
-    const slider = document.getElementById('timeSlider');
-    const valText = document.getElementById('sliderTimeVal');
-
-    slider.addEventListener('input', (e) => {
-      mockTotalMin = Number(e.target.value);
-      const h = String(Math.floor(mockTotalMin / 60)).padStart(2, '0');
-      const m = String(mockTotalMin % 60).padStart(2, '0');
-      valText.textContent = `${h}:${m}`;
-      
-      // updateScheduleの判定用時刻を上書き実行
-      applyMockTime(mockTotalMin, `${h}:${m}:00`);
+    // 肯定側・否定側のクラス付与
+    document.querySelectorAll("tbody tr").forEach((row) => {
+      const programCell = row.cells[1];
+      if (!programCell) return;
+      const program = programCell.textContent;
+      if (program.includes("肯定側")) {
+        row.classList.add("affirmative-row");
+      } else if (program.includes("否定側")) {
+        row.classList.add("negative-row");
+      }
     });
 
-    document.getElementById('resetRealTimeBtn').addEventListener('click', () => {
-      mockTotalMin = null;
-      valText.textContent = "リアルタイム";
-    });
+    // "HH:MM" -> 分変換
+    function timeToMinutes(timeStr) {
+      if (!timeStr) return 0;
+      const [h, m] = timeStr.split(':').map(Number);
+      return h * 60 + m;
+    }
 
-    function applyMockTime(totalMin, displayTime) {
-      document.getElementById('liveClock').textContent = `現在時刻: ${displayTime} (テスト)`;
+    // テスト用の時刻保持変数（nullなら実時刻で動く）
+    let testMockMin = null;
+
+    // スケジュール判定関数
+    function renderScheduleByMinutes(totalMin, displayTimeStr) {
+      document.getElementById('liveClock').textContent = `現在時刻: ${displayTimeStr}`;
+
       const rows = document.querySelectorAll("tbody tr[data-start]");
       rows.forEach((row) => {
         const startMin = timeToMinutes(row.getAttribute("data-start"));
         const endMin = timeToMinutes(row.getAttribute("data-end"));
         const programCell = row.cells[1];
 
+        // 既存の進行中バッジをクリア
         const existingBadge = row.querySelector(".now-badge");
         if (existingBadge) existingBadge.remove();
+
         row.classList.remove("is-current", "is-past");
 
+        // ★ 開始時間以上 かつ 終了時間未満 の間はずっと赤表示を維持
         if (totalMin >= startMin && totalMin < endMin) {
           row.classList.add("is-current");
           const badge = document.createElement("span");
@@ -805,12 +799,65 @@
           badge.textContent = "進行中";
           programCell.appendChild(badge);
         } else if (totalMin >= endMin) {
+          // 終了済み
           row.classList.add("is-past");
         }
       });
     }
-  })();
-</script>
+
+    // 1秒ごとの定期実行
+    function updateSchedule() {
+      // スライダー操作中は実時刻で上書きしない
+      if (testMockMin !== null) return;
+
+      const now = new Date();
+      const currentHours = now.getHours();
+      const currentMinutes = now.getMinutes();
+      const currentSeconds = now.getSeconds();
+
+      const pad = (n) => String(n).padStart(2, '0');
+      const timeStr = `${pad(currentHours)}:${pad(currentMinutes)}:${pad(currentSeconds)}`;
+      const totalMin = currentHours * 60 + currentMinutes;
+
+      renderScheduleByMinutes(totalMin, timeStr);
+    }
+
+    updateSchedule();
+    setInterval(updateSchedule, 1000);
+  </script>
+
+  <!-- テスト用コントローラー（本番公開前に削除してください） -->
+  <div id="timeController" style="position:fixed;bottom:16px;right:16px;background:#1e293b;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.3);z-index:9999;font-size:13px;display:flex;flex-direction:column;gap:6px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <strong>テスト用時刻バー</strong>
+      <button onclick="document.getElementById('timeController').remove(); testMockMin = null; updateSchedule();" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:16px;">×</button>
+    </div>
+    <input type="range" id="timeSlider" min="540" max="720" value="560" style="width:220px;cursor:pointer;">
+    <div style="display:flex;justify-content:space-between;align-items:center;font-family:monospace;">
+      <span>設定: <b id="sliderTimeVal" style="color:#38bdf8;">09:20</b></span>
+      <button id="resetRealTimeBtn" style="padding:2px 8px;font-size:11px;background:#334155;color:#fff;border:1px solid #475569;border-radius:4px;cursor:pointer;">実時刻に戻す</button>
+    </div>
+  </div>
+
+  <script>
+    const slider = document.getElementById('timeSlider');
+    const valText = document.getElementById('sliderTimeVal');
+
+    slider.addEventListener('input', (e) => {
+      testMockMin = Number(e.target.value);
+      const h = String(Math.floor(testMockMin / 60)).padStart(2, '0');
+      const m = String(testMockMin % 60).padStart(2, '0');
+      const timeStr = `${h}:${m}:00 (テスト)`;
+      valText.textContent = `${h}:${m}`;
+      renderScheduleByMinutes(testMockMin, timeStr);
+    });
+
+    document.getElementById('resetRealTimeBtn').addEventListener('click', () => {
+      testMockMin = null;
+      valText.textContent = "実時刻";
+      updateSchedule();
+    });
+  </script>
 
   
 </body>
