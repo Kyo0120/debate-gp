@@ -2,642 +2,307 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>大会スケジュール</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ディベート大会 - スケジュール</title>
   <style>
     :root {
-      --navy: #17324d;
-      --blue: #2864a5;
-      --line: #d9e2ec;
-      --text: #253449;
-      --muted: #68788a;
-      --accent: #e8a33a;
-
-      --affirmative-bg: #edf5ff;
-      --affirmative-accent: #2878c7;
-      --negative-bg: #fff0f0;
-      --negative-accent: #d9534f;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-sub: #64748b;
+      --border: #e2e8f0;
+      --accent: #2563eb;
+      --active-red: #ef4444;
+      --active-bg: #fef2f2;
+      --past-bg: #f1f5f9;
+      --past-text: #94a3b8;
     }
 
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
-      padding: 32px 18px;
-      background: #f4f7fa;
-      color: var(--text);
-      font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI",
-        "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px;
     }
 
-    main {
-      max-width: 900px;
-      margin: 0 auto;
+    .container {
+      width: 100%;
+      max-width: 560px;
     }
 
     header {
-      margin-bottom: 18px;
-      padding: 32px;
-      border-radius: 18px;
-      color: #fff;
-      background: linear-gradient(135deg, var(--navy), var(--blue));
-      box-shadow: 0 8px 24px #17324d22;
+      margin-bottom: 24px;
+      text-align: center;
+      position: relative;
     }
 
-    header .label {
-      margin: 0 0 8px;
-      color: #d7e8fa;
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
+    .back-btn {
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
     h1 {
-      margin: 0;
-      font-size: clamp(1.8rem, 5vw, 2.5rem);
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 6px;
     }
 
-    header .summary {
-      margin: 12px 0 0;
-      color: #e6eff8;
+    .current-clock {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-sub);
+      background: #e2e8f0;
+      padding: 4px 12px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-top: 6px;
     }
 
-    .legend {
+    .schedule-list {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px 18px;
-      margin: 0 0 18px;
-      padding: 12px 16px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: #fff;
-      color: var(--text);
-      font-size: 0.9rem;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    .legend-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .legend-swatch {
-      width: 18px;
-      height: 18px;
-      border-radius: 4px;
-    }
-
-    .legend-swatch.affirmative {
-      border-left: 4px solid var(--affirmative-accent);
-      background: var(--affirmative-bg);
-    }
-
-    .legend-swatch.negative {
-      border-left: 4px solid var(--negative-accent);
-      background: var(--negative-bg);
-    }
-
-    .schedule-section {
-      margin: 22px 0;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: #fff;
-      box-shadow: 0 4px 14px #17324d0a;
-    }
-
-    .section-heading {
+    .schedule-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      padding: 17px 22px;
-      color: #fff;
-      background: var(--navy);
+      transition: all 0.3s ease;
+      position: relative;
     }
 
-    .section-heading h2 {
-      margin: 0;
-      font-size: 1.2rem;
+    .time-badge {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text-main);
+      min-width: 110px;
     }
 
-    .section-heading span {
-      color: #d7e8fa;
-      font-size: 0.9rem;
+    .item-body {
+      flex: 1;
+      padding: 0 12px;
+    }
+
+    .item-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .item-detail {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .status-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
       white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
+    /* 進行中（赤文字・赤ボーダー） */
+    .schedule-item.is-current {
+      background: var(--active-bg);
+      border-color: var(--active-red);
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
     }
 
-    th,
-    td {
-      padding: 12px 22px;
-      border-bottom: 1px solid var(--line);
-      text-align: left;
-    }
-
-    th {
-      color: var(--muted);
-      background: #f8fafc;
-      font-size: 0.82rem;
+    .schedule-item.is-current .time-badge,
+    .schedule-item.is-current .item-title {
+      color: var(--active-red);
       font-weight: 700;
     }
 
-    tr:last-child td {
-      border-bottom: 0;
+    .schedule-item.is-current .status-badge {
+      background: var(--active-red);
+      color: #ffffff;
+      animation: pulse 1.5s infinite;
     }
 
-    td.time {
-      width: 180px;
-      color: var(--blue);
-      font-variant-numeric: tabular-nums;
-      font-weight: 750;
-      white-space: nowrap;
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
     }
 
-    td.duration {
-      width: 100px;
-      color: var(--muted);
-      text-align: right;
-      white-space: nowrap;
+    /* 終了済み */
+    .schedule-item.is-past {
+      background: var(--past-bg);
+      border-color: #e2e8f0;
+      opacity: 0.65;
     }
 
-    /* 肯定側：青 */
-    tr.affirmative-row td {
-      background: var(--affirmative-bg);
+    .schedule-item.is-past .time-badge,
+    .schedule-item.is-past .item-title {
+      color: var(--past-text);
     }
 
-    tr.affirmative-row td:first-child {
-      box-shadow: inset 4px 0 var(--affirmative-accent);
+    .schedule-item.is-past .status-badge {
+      background: #cbd5e1;
+      color: #475569;
     }
 
-    /* 否定側：赤 */
-    tr.negative-row td {
-      background: var(--negative-bg);
-    }
-
-    tr.negative-row td:first-child {
-      box-shadow: inset 4px 0 var(--negative-accent);
-    }
-
-    /* 休憩 */
-    tr.break-row td {
-      background: #fffaf0;
-    }
-
-    tr.break-row td:first-child {
-      box-shadow: inset 4px 0 var(--accent);
-    }
-
-    /* オープニング・表彰など */
-    tr.opening-row td {
-      background: #eef5fc;
-    }
-
-    tr.final-row td {
-      background: #f5f2fc;
-    }
-
-    footer {
-      margin: 24px 0 8px;
-      color: var(--muted);
-      font-size: 0.85rem;
-      text-align: center;
-    }
-
-    @media (max-width: 560px) {
-      body {
-        padding: 18px 10px;
-      }
-
-      header {
-        padding: 24px 20px;
-      }
-
-      th,
-      td {
-        padding: 11px 12px;
-      }
-
-      td.time {
-        width: auto;
-        font-size: 0.9rem;
-      }
-
-      td.duration {
-        width: auto;
-      }
-
-      .section-heading {
-        padding: 15px 14px;
-      }
-    }
-
-    @media print {
-      body {
-        padding: 0;
-        background: #fff;
-      }
-
-      header,
-      .schedule-section {
-        box-shadow: none;
-      }
-
-      header {
-        border-radius: 0;
-      }
-
-      .schedule-section {
-        break-inside: avoid;
-      }
-
-      .section-heading,
-      tr.affirmative-row td,
-      tr.negative-row td,
-      tr.break-row td,
-      tr.opening-row td,
-      tr.final-row td {
-        print-color-adjust: exact;
-        -webkit-print-color-adjust: exact;
-      }
+    /* 未開始 */
+    .schedule-item.is-future .status-badge {
+      background: #f1f5f9;
+      color: #64748b;
     }
   </style>
 </head>
-
 <body>
-  <main>
+
+  <div class="container">
     <header>
-      <p class="label">PROGRAM</p>
+      <a href="./index.html" class="back-btn">‹ 戻る</a>
       <h1>大会スケジュール</h1>
-      <p class="summary">各試合の進行予定をご確認ください。</p>
+      <div id="liveClock" class="current-clock">現在時刻: --:--:--</div>
     </header>
 
-    <div class="legend" aria-label="色分けの凡例">
-      <span class="legend-item">
-        <span class="legend-swatch affirmative" aria-hidden="true"></span>
-        肯定側
-      </span>
-      <span class="legend-item">
-        <span class="legend-swatch negative" aria-hidden="true"></span>
-        否定側
-      </span>
-    </div>
-
-    <section class="schedule-section" aria-labelledby="opening-title">
-      <div class="section-heading">
-        <h2 id="opening-title">オープニング</h2>
-        <span>09:10?09:20</span>
+    <main class="schedule-list" id="scheduleList">
+      <!-- 
+        data-start と data-end に「HH:MM」形式で時間を記載します。
+        必要に応じてタイトルや説明を変更・追加・削除してください。
+      -->
+      <div class="schedule-item" data-start="09:00" data-end="09:30">
+        <div class="time-badge">09:00 - 09:30</div>
+        <div class="item-body">
+          <div class="item-title">オープニング & ルール説明</div>
+          <div class="item-detail">対戦組み合わせ・採点基準の確認</div>
+        </div>
+        <div class="status-badge">予定</div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">時間</th>
-            <th scope="col">プログラム</th>
-            <th scope="col">所要時間</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="opening-row">
-            <td class="time">09:10?09:20</td>
-            <td>オープニング</td>
-            <td class="duration">10分</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
 
-    <section class="schedule-section" aria-labelledby="match1-title">
-      <div class="section-heading">
-        <h2 id="match1-title">第1試合</h2>
-        <span>09:20?09:58</span>
+      <div class="schedule-item" data-start="09:30" data-end="10:30">
+        <div class="time-badge">09:30 - 10:30</div>
+        <div class="item-body">
+          <div class="item-title">第1試合（予選A）</div>
+          <div class="item-detail">第1試合 終了後、結果投票</div>
+        </div>
+        <div class="status-badge">予定</div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">時間</th>
-            <th scope="col">プログラム</th>
-            <th scope="col">所要時間</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="time">09:20?09:23</td>
-            <td>ガイダンス</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">09:23?09:25</td>
-            <td>準備時間</td>
-            <td class="duration">2分</td>
-          </tr>
-          <tr>
-            <td class="time">09:25?09:28</td>
-            <td>肯定側立論</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">09:28?09:30</td>
-            <td>否定側質疑</td>
-            <td class="duration">2分</td>
-          </tr>
-          <tr>
-            <td class="time">09:30?09:33</td>
-            <td>否定側立論</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">09:33?09:35</td>
-            <td>肯定側質疑</td>
-            <td class="duration">2分</td>
-          </tr>
-          <tr>
-            <td class="time">09:35?09:37</td>
-            <td>作戦時間</td>
-            <td class="duration">2分</td>
-          </tr>
-          <tr>
-            <td class="time">09:37?09:40</td>
-            <td>否定側反論</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">09:40?09:43</td>
-            <td>肯定側反論</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">09:43?09:45</td>
-            <td>作戦時間</td>
-            <td class="duration">2分</td>
-          </tr>
-          <tr>
-            <td class="time">09:45?09:48</td>
-            <td>否定側反駁</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">09:48?09:51</td>
-            <td>肯定側反駁</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">09:51?09:54</td>
-            <td>評価・コメント登録</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">09:54?09:55</td>
-            <td>評価確認集計</td>
-            <td class="duration">1分</td>
-          </tr>
-          <tr>
-            <td class="time">09:55?09:58</td>
-            <td>評価発表・コメント</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr class="break-row">
-            <td class="time">09:58?10:08</td>
-            <td>休憩・準備</td>
-            <td class="duration">10分</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
 
-    <section class="schedule-section" aria-labelledby="match2-title">
-      <div class="section-heading">
-        <h2 id="match2-title">第2試合</h2>
-        <span>10:08?10:54</span>
+      <div class="schedule-item" data-start="10:45" data-end="11:45">
+        <div class="time-badge">10:45 - 11:45</div>
+        <div class="item-body">
+          <div class="item-title">第2試合（予選B）</div>
+          <div class="item-detail">第2試合 終了後、結果投票</div>
+        </div>
+        <div class="status-badge">予定</div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">時間</th>
-            <th scope="col">プログラム</th>
-            <th scope="col">所要時間</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="time">10:08?10:10</td>
-            <td>ガイダンス（3位決定戦）</td>
-            <td class="duration">2分</td>
-          </tr>
-          <tr>
-            <td class="time">10:10?10:13</td>
-            <td>肯定側立論</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">10:13?10:15</td>
-            <td>否定側質疑</td>
-            <td class="duration">2分</td>
-          </tr>
-          <tr>
-            <td class="time">10:15?10:18</td>
-            <td>否定側立論</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">10:18?10:20</td>
-            <td>肯定側質疑</td>
-            <td class="duration">2分</td>
-          </tr>
-          <tr>
-            <td class="time">10:20?10:22</td>
-            <td>準備時間</td>
-            <td class="duration">2分</td>
-          </tr>
-          <tr>
-            <td class="time">10:22?10:25</td>
-            <td>否定側反論</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">10:25?10:28</td>
-            <td>肯定側反論</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">10:28?10:30</td>
-            <td>準備時間</td>
-            <td class="duration">2分</td>
-          </tr>
-          <tr>
-            <td class="time">10:30?10:33</td>
-            <td>否定側反駁</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">10:33?10:36</td>
-            <td>肯定側反駁</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">10:36?10:39</td>
-            <td>評価・コメント登録</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">10:39?10:40</td>
-            <td>評価確認集計</td>
-            <td class="duration">1分</td>
-          </tr>
-          <tr>
-            <td class="time">10:40?10:44</td>
-            <td>評価発表・コメント</td>
-            <td class="duration">4分</td>
-          </tr>
-          <tr class="break-row">
-            <td class="time">10:44?10:54</td>
-            <td>休憩・準備</td>
-            <td class="duration">10分</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
 
-    <section class="schedule-section" aria-labelledby="match3-title">
-      <div class="section-heading">
-        <h2 id="match3-title">第3試合</h2>
-        <span>10:54?11:33</span>
+      <div class="schedule-item" data-start="11:45" data-end="13:00">
+        <div class="time-badge">11:45 - 13:00</div>
+        <div class="item-body">
+          <div class="item-title">昼食・休憩</div>
+          <div class="item-detail">決勝進出チーム発表</div>
+        </div>
+        <div class="status-badge">予定</div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">時間</th>
-            <th scope="col">プログラム</th>
-            <th scope="col">所要時間</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="time">10:54?10:56</td>
-            <td>ガイダンス（決勝戦）</td>
-            <td class="duration">2分</td>
-          </tr>
-          <tr>
-            <td class="time">10:56?10:59</td>
-            <td>肯定側立論</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">10:59?11:01</td>
-            <td>否定側質疑</td>
-            <td class="duration">2分</td>
-          </tr>
-          <tr>
-            <td class="time">11:01?11:04</td>
-            <td>否定側立論</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">11:04?11:06</td>
-            <td>肯定側質疑</td>
-            <td class="duration">2分</td>
-          </tr>
-          <tr>
-            <td class="time">11:06?11:08</td>
-            <td>準備時間</td>
-            <td class="duration">2分</td>
-          </tr>
-          <tr>
-            <td class="time">11:08?11:11</td>
-            <td>否定側反論</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">11:11?11:14</td>
-            <td>肯定側反論</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">11:14?11:16</td>
-            <td>準備時間</td>
-            <td class="duration">2分</td>
-          </tr>
-          <tr>
-            <td class="time">11:16?11:19</td>
-            <td>否定側反駁</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">11:19?11:22</td>
-            <td>肯定側反駁</td>
-            <td class="duration">3分</td>
-          </tr>
-          <tr>
-            <td class="time">11:22?11:26</td>
-            <td>評価・コメント登録、MVP登録</td>
-            <td class="duration">4分</td>
-          </tr>
-          <tr>
-            <td class="time">11:26?11:28</td>
-            <td>評価確認集計</td>
-            <td class="duration">2分</td>
-          </tr>
-          <tr>
-            <td class="time">11:28?11:33</td>
-            <td>評価発表・コメント</td>
-            <td class="duration">5分</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
 
-    <section class="schedule-section" aria-labelledby="closing-title">
-      <div class="section-heading">
-        <h2 id="closing-title">表彰・クロージング</h2>
-        <span>11:33?11:53</span>
+      <div class="schedule-item" data-start="13:00" data-end="14:15">
+        <div class="time-badge">13:00 - 14:15</div>
+        <div class="item-body">
+          <div class="item-title">決勝戦</div>
+          <div class="item-detail">優勝決定戦・熱戦のディベート</div>
+        </div>
+        <div class="status-badge">予定</div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">時間</th>
-            <th scope="col">プログラム</th>
-            <th scope="col">所要時間</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="final-row">
-            <td class="time">11:33?11:43</td>
-            <td>各種表彰</td>
-            <td class="duration">10分</td>
-          </tr>
-          <tr class="final-row">
-            <td class="time">11:43?11:53</td>
-            <td>クロージング・撤収</td>
-            <td class="duration">10分</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
 
-    <footer>進行状況により、時間が前後する場合があります。</footer>
-  </main>
+      <div class="schedule-item" data-start="14:15" data-end="14:45">
+        <div class="time-badge">14:15 - 14:45</div>
+        <div class="item-body">
+          <div class="item-title">MVP・最終投票タイム</div>
+          <div class="item-detail">MVP投票フォームより投票受付</div>
+        </div>
+        <div class="status-badge">予定</div>
+      </div>
+
+      <div class="schedule-item" data-start="14:45" data-end="15:15">
+        <div class="time-badge">14:45 - 15:15</div>
+        <div class="item-body">
+          <div class="item-title">結果発表 & 表彰・総括</div>
+          <div class="item-detail">結果表示画面の公開、表彰式</div>
+        </div>
+        <div class="status-badge">予定</div>
+      </div>
+    </main>
+  </div>
 
   <script>
-    // プログラム名に「肯定側」「否定側」が含まれる行を自動で色分け
-    document.querySelectorAll("tbody tr").forEach((row) => {
-      const programCell = row.cells[1];
-      if (!programCell) return;
+    // 時間を "HH:MM" 形式から 分換算（数値）に変換する関数
+    function timeToMinutes(timeStr) {
+      const [h, m] = timeStr.split(':').map(Number);
+      return h * 60 + m;
+    }
 
-      const program = programCell.textContent;
+    function updateScheduleStatus() {
+      const now = new Date();
+      const currentHours = now.getHours();
+      const currentMinutes = now.getMinutes();
+      const currentSeconds = now.getSeconds();
+      
+      // 時計表示の更新
+      const pad = (n) => String(n).padStart(2, '0');
+      document.getElementById('liveClock').textContent = 
+        `現在時刻: ${pad(currentHours)}:${pad(currentMinutes)}:${pad(currentSeconds)}`;
 
-      if (program.includes("肯定側")) {
-        row.classList.add("affirmative-row");
-      } else if (program.includes("否定側")) {
-        row.classList.add("negative-row");
-      }
-    });
+      const currentTotalMin = currentHours * 60 + currentMinutes;
+
+      const items = document.querySelectorAll('.schedule-item');
+      items.forEach(item => {
+        const startMin = timeToMinutes(item.getAttribute('data-start'));
+        const endMin = timeToMinutes(item.getAttribute('data-end'));
+        const badge = item.querySelector('.status-badge');
+
+        item.classList.remove('is-current', 'is-past', 'is-future');
+
+        if (currentTotalMin >= startMin && currentTotalMin < endMin) {
+          // 進行中
+          item.classList.add('is-current');
+          badge.textContent = '● 進行中';
+        } else if (currentTotalMin >= endMin) {
+          // 終了済み
+          item.classList.add('is-past');
+          badge.textContent = '終了';
+        } else {
+          // 未開始
+          item.classList.add('is-future');
+          badge.textContent = '予定';
+        }
+      });
+    }
+
+    // 初回実行と1秒ごとの定期更新
+    updateScheduleStatus();
+    setInterval(updateScheduleStatus, 1000);
   </script>
 </body>
 </html>
