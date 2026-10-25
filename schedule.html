@@ -752,6 +752,66 @@
 
     updateSchedule();
     setInterval(updateSchedule, 1000);
+
+  <!-- テスト用コントローラー（本番公開前に削除してください） -->
+<div id="timeController" style="position:fixed;bottom:16px;right:16px;background:#1e293b;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.3);z-index:9999;font-size:13px;display:flex;flex-direction:column;gap:6px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <strong>テスト用時刻バー</strong>
+    <button onclick="document.getElementById('timeController').remove()" style="background:none;border:none;color:#94a3b8;cursor:pointer;">×</button>
+  </div>
+  <input type="range" id="timeSlider" min="540" max="730" value="550" style="width:220px;cursor:pointer;">
+  <div style="display:flex;justify-content:space-between;font-family:monospace;">
+    <span>設定: <b id="sliderTimeVal" style="color:#38bdf8;">09:10</b></span>
+    <button id="resetRealTimeBtn" style="padding:2px 6px;font-size:11px;cursor:pointer;">実時刻に戻す</button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    let mockTotalMin = null;
+    const slider = document.getElementById('timeSlider');
+    const valText = document.getElementById('sliderTimeVal');
+
+    slider.addEventListener('input', (e) => {
+      mockTotalMin = Number(e.target.value);
+      const h = String(Math.floor(mockTotalMin / 60)).padStart(2, '0');
+      const m = String(mockTotalMin % 60).padStart(2, '0');
+      valText.textContent = `${h}:${m}`;
+      
+      // updateScheduleの判定用時刻を上書き実行
+      applyMockTime(mockTotalMin, `${h}:${m}:00`);
+    });
+
+    document.getElementById('resetRealTimeBtn').addEventListener('click', () => {
+      mockTotalMin = null;
+      valText.textContent = "リアルタイム";
+    });
+
+    function applyMockTime(totalMin, displayTime) {
+      document.getElementById('liveClock').textContent = `現在時刻: ${displayTime} (テスト)`;
+      const rows = document.querySelectorAll("tbody tr[data-start]");
+      rows.forEach((row) => {
+        const startMin = timeToMinutes(row.getAttribute("data-start"));
+        const endMin = timeToMinutes(row.getAttribute("data-end"));
+        const programCell = row.cells[1];
+
+        const existingBadge = row.querySelector(".now-badge");
+        if (existingBadge) existingBadge.remove();
+        row.classList.remove("is-current", "is-past");
+
+        if (totalMin >= startMin && totalMin < endMin) {
+          row.classList.add("is-current");
+          const badge = document.createElement("span");
+          badge.className = "now-badge";
+          badge.textContent = "進行中";
+          programCell.appendChild(badge);
+        } else if (totalMin >= endMin) {
+          row.classList.add("is-past");
+        }
+      });
+    }
+  })();
+</script>
   </script>
 </body>
 </html>
