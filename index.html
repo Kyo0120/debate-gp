@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ディベート大会</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-sub: #64748b;
+      --border: #e2e8f0;
+      --accent: #2563eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 540px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      font-size: 14px;
+      color: var(--text-sub);
+    }
+
+    .button-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .menu-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      transition: all 0.2s ease;
+    }
+
+    .menu-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+    }
+
+    .menu-card:active {
+      transform: translateY(0);
+    }
+
+    .card-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .card-desc {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .arrow-icon {
+      font-size: 18px;
+      color: #94a3b8;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .menu-card:hover .arrow-icon {
+      transform: translateX(4px);
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>ディベート大会</h1>
+      <p class="subtitle">ポータルメニュー</p>
+    </header>
+
+    <main class="button-grid">
+      <!-- 1. スケジュール -->
+      <a href="https://example.com/schedule" target="_blank" rel="noopener noreferrer" class="menu-card">
+        <div class="card-info">
+          <span class="card-title">スケジュール</span>
+          <span class="card-desc">タイムテーブル・対戦表を確認</span>
+        </div>
+        <span class="arrow-icon">→</span>
+      </a>
+
+      <!-- 2. 結果投票フォーム -->
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLScR0jZw10xV1L4BHCVGA6FwH0qGJCVB7Rg-mS4PprjBAoW39g/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="menu-card">
+        <div class="card-info">
+          <span class="card-title">結果投票フォーム</span>
+          <span class="card-desc">対戦ごとの判定を送信</span>
+        </div>
+        <span class="arrow-icon">→</span>
+      </a>
+
+      <!-- 3. MVP投票フォーム -->
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSfLiOrfySDXmAlaQ-AqnfRd_pn5icy0VOJAnkSkK7jRZ80PyQ/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="menu-card">
+        <div class="card-info">
+          <span class="card-title">MVP投票フォーム</span>
+          <span class="card-desc">優秀ディベーターへの投票</span>
+        </div>
+        <span class="arrow-icon">→</span>
+      </a>
+
+      <!-- 4. 結果表示用画面 -->
+      <a href="https://script.google.com/macros/s/ZZZZZ/exec" target="_blank" rel="noopener noreferrer" class="menu-card">
+        <div class="card-info">
+          <span class="card-title">結果発表</span>
+          <span class="card-desc">勝敗集計・MVP結果の確認</span>
+        </div>
+        <span class="arrow-icon">→</span>
+      </a>
+    </main>
+  </div>
+
+</body>
+</html>
