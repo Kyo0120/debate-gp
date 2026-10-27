@@ -824,41 +824,6 @@
 
     updateSchedule();
     setInterval(updateSchedule, 1000);
-  </script>
-
-  <!-- テスト用コントローラー（本番公開前に削除してください） -->
-  <div id="timeController" style="position:fixed;bottom:16px;right:16px;background:#1e293b;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.3);z-index:9999;font-size:13px;display:flex;flex-direction:column;gap:6px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-      <strong>テスト用時刻バー</strong>
-      <button onclick="document.getElementById('timeController').remove(); testMockMin = null; updateSchedule();" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:16px;">×</button>
-    </div>
-    <input type="range" id="timeSlider" min="540" max="720" value="560" style="width:220px;cursor:pointer;">
-    <div style="display:flex;justify-content:space-between;align-items:center;font-family:monospace;">
-      <span>設定: <b id="sliderTimeVal" style="color:#38bdf8;">09:20</b></span>
-      <button id="resetRealTimeBtn" style="padding:2px 8px;font-size:11px;background:#334155;color:#fff;border:1px solid #475569;border-radius:4px;cursor:pointer;">実時刻に戻す</button>
-    </div>
-  </div>
-
-  <script>
-    const slider = document.getElementById('timeSlider');
-    const valText = document.getElementById('sliderTimeVal');
-
-    slider.addEventListener('input', (e) => {
-      testMockMin = Number(e.target.value);
-      const h = String(Math.floor(testMockMin / 60)).padStart(2, '0');
-      const m = String(testMockMin % 60).padStart(2, '0');
-      const timeStr = `${h}:${m}:00 (テスト)`;
-      valText.textContent = `${h}:${m}`;
-      renderScheduleByMinutes(testMockMin, timeStr);
-    });
-
-    document.getElementById('resetRealTimeBtn').addEventListener('click', () => {
-      testMockMin = null;
-      valText.textContent = "実時刻";
-      updateSchedule();
-    });
-  </script>
-
-  
+  </script> 
 </body>
 </html>
